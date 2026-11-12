@@ -1,5 +1,9 @@
 name: Deploy Action
+author: sanwv
 description: Deploy a prebuilt directory over SSH with rsync and atomic releases
+branding:
+  icon: upload-cloud
+  color: blue
 inputs:
   ssh_private_key:
     description: SSH private key used to connect to the server
