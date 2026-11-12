@@ -1,6 +1,6 @@
-name: Atomic SSH Release Deploy
+name: Fast SSH Deploy with Incremental Rsync
 author: sanwv
-description: Deploy a prebuilt directory over SSH with rsync and atomic releases
+description: Fast incremental deployments over SSH using rsync, with atomic release switching and rollback support
 branding:
   icon: upload-cloud
   color: blue
