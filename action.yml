@@ -1,4 +1,4 @@
-name: Deploy Action
+name: Atomic SSH Release Deploy
 author: sanwv
 description: Deploy a prebuilt directory over SSH with rsync and atomic releases
 branding:
