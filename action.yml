@@ -1,0 +1,65 @@
+name: Deploy Action
+description: Deploy a prebuilt directory over SSH with rsync and atomic releases
+inputs:
+  ssh_private_key:
+    description: SSH private key used to connect to the server
+    required: true
+  ssh_known_hosts:
+    description: Verified SSH host keys in known_hosts format
+    required: false
+    default: ''
+  remote_host:
+    description: Remote hostname or IP address
+    required: true
+  remote_user:
+    description: SSH login user
+    required: true
+  source:
+    description: Runner directory containing built files
+    required: true
+  target:
+    description: Remote deployment root directory
+    required: true
+  remote_port:
+    description: SSH port
+    required: false
+    default: '22'
+  releases_to_keep:
+    description: Number of releases to retain, including the active release (1-100)
+    required: false
+    default: '5'
+  shared_items:
+    description: Multiline shared item configuration
+    required: false
+    default: ''
+  script_before:
+    description: Remote shell script run before creating a release
+    required: false
+    default: ''
+  script_before_activate:
+    description: Remote shell script run after release preparation and before activating it
+    required: false
+    default: ''
+  script_after:
+    description: Remote shell script run after activation and before old release cleanup
+    required: false
+    default: ''
+runs:
+  using: composite
+  steps:
+    - name: Deploy release
+      shell: bash
+      env:
+        INPUT_SSH_PRIVATE_KEY: ${{ inputs.ssh_private_key }}
+        INPUT_SSH_KNOWN_HOSTS: ${{ inputs.ssh_known_hosts }}
+        INPUT_REMOTE_HOST: ${{ inputs.remote_host }}
+        INPUT_REMOTE_USER: ${{ inputs.remote_user }}
+        INPUT_REMOTE_PORT: ${{ inputs.remote_port }}
+        INPUT_SOURCE: ${{ inputs.source }}
+        INPUT_TARGET: ${{ inputs.target }}
+        INPUT_RELEASES_TO_KEEP: ${{ inputs.releases_to_keep }}
+        INPUT_SHARED_ITEMS: ${{ inputs.shared_items }}
+        INPUT_SCRIPT_BEFORE: ${{ inputs.script_before }}
+        INPUT_SCRIPT_BEFORE_ACTIVATE: ${{ inputs.script_before_activate }}
+        INPUT_SCRIPT_AFTER: ${{ inputs.script_after }}
+      run: "$GITHUB_ACTION_PATH/deploy.sh"
