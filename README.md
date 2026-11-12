@@ -1,8 +1,8 @@
-# Deploy Action
+# Rsync Deploy with Releases and Rollback
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-Deploy a prebuilt static site to a Linux server over SSH. This GitHub Action uses `rsync` to upload each release and atomically switches the `current` symlink after the release is ready.
+Fast incremental `rsync` deployment over SSH, with independent releases, atomic `current` switching, rollback hooks, and persistent shared files. **Rsync Deploy with Releases and Rollback** deploys prebuilt files; it does not build your application.
 
 This Action is published from [`sanwv/deploy-action`](https://github.com/sanwv/deploy-action).
 

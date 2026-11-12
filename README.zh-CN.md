@@ -1,8 +1,8 @@
-# Deploy Action
+# Rsync Deploy with Releases and Rollback
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-通过 SSH 将已构建的静态文件发布到 Linux 服务器。Action 使用 `rsync` 上传每个版本，并在新版本准备完成后原子切换 `current` 符号链接。
+通过 SSH 和 `rsync` 快速增量发布已构建文件，并以独立 release、原子切换 `current`、失败回退和持久 shared 文件管理版本。**Rsync Deploy with Releases and Rollback** 不负责构建应用。
 
 本 Action 发布于 [`sanwv/deploy-action`](https://github.com/sanwv/deploy-action)。
 
