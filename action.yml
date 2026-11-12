@@ -1,6 +1,6 @@
-name: Fast SSH Deploy with Incremental Rsync
+name: Rsync Deploy with Releases and Rollback
 author: sanwv
-description: Fast incremental deployments over SSH using rsync, with atomic release switching and rollback support
+description: Fast incremental rsync over SSH with atomic release switching, rollback, and shared files
 branding:
   icon: upload-cloud
   color: blue
