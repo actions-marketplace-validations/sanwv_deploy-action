@@ -34,6 +34,42 @@ For incremental deployments, the Action keeps a complete project copy in `target
 
 Before the symlink switch, a failed deployment leaves `current` pointing to the previous release. For an atomic switch, `target/current` and `target/releases` must be on the same filesystem.
 
+## Roll back with `sanwv/rollback-action`
+
+Use [`sanwv/rollback-action`](https://github.com/sanwv/rollback-action) to manually switch `current` to a retained release. The deploy Action creates releases and applies the `releases_to_keep` retention policy; the rollback Action selects an existing release and switches the symlink without uploading or deleting release files.
+
+Both Actions use the same remote lock, `<target>/.deploy.lock`, so activation, pruning, and rollback are serialized on the server. Deployment and rollback workflows should also use the same GitHub Actions concurrency group for the target environment. Keep enough releases with `releases_to_keep` to cover the rollback depth you need; a pruned release cannot be restored by rollback.
+
+Example manual rollback workflow:
+
+```yaml
+name: Rollback production
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: production-deploy # Use this exact group in the deployment workflow too.
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: sanwv/rollback-action@v1
+        with:
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+          remote_host: ${{ vars.REMOTE_HOST }}
+          remote_user: ${{ vars.REMOTE_USER }}
+          remote_port: ${{ vars.REMOTE_PORT }}
+          target: /srv/www/my-site
+          steps: 1
+```
+
+See the [rollback Action documentation](https://github.com/sanwv/rollback-action#readme) for exact-release selection, multiple rollback steps, hooks, and failure behavior.
+
 ## Quick start
 
 In your repository, open **Settings → Secrets and variables → Actions** and add:

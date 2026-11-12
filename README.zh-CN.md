@@ -34,6 +34,42 @@
 
 切换符号链接前发生错误时，`current` 仍指向上一个版本。为保证原子切换，`target/current` 和 `target/releases` 必须位于同一个文件系统。
 
+## 使用 `sanwv/rollback-action` 回退
+
+可以使用配套的 [`sanwv/rollback-action`](https://github.com/sanwv/rollback-action) 将 `current` 手动切换到仍保留的 release。部署 Action 负责创建 release 并根据 `releases_to_keep` 清理旧版本；回退 Action 选择已有版本并切换符号链接，不会上传代码或删除 release。
+
+两个 Action 在服务器上共用 `<target>/.deploy.lock`，因此激活、清理和回退会串行执行。部署与回退工作流还应使用相同的 GitHub Actions concurrency group。请通过 `releases_to_keep` 保留所需回退深度的版本；已经清理的 release 无法由回退 Action 恢复。
+
+手动回退工作流示例：
+
+```yaml
+name: Rollback production
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: production-deploy # 部署工作流也使用这个组名。
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: sanwv/rollback-action@v1
+        with:
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+          remote_host: ${{ vars.REMOTE_HOST }}
+          remote_user: ${{ vars.REMOTE_USER }}
+          remote_port: ${{ vars.REMOTE_PORT }}
+          target: /srv/www/my-site
+          steps: 1
+```
+
+精确指定 release、多次回退、钩子和失败处理方式见[回退 Action 文档](https://github.com/sanwv/rollback-action#readme)。
+
 ## 快速开始
 
 在仓库的 **Settings → Secrets and variables → Actions** 中添加以下配置：
